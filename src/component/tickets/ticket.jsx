@@ -2,65 +2,85 @@ import React, {useEffect, useState} from 'react';
 import style from './ticket.module.css';
 import moment from "moment";
 import {Button, Table} from "react-bootstrap";
-import Modal from 'react-modal';
-import openUpdateModal from "../updateModal/updateModal";
+import UpdateModal from "../updateModal/updateModal";
+import ModalWrapper from "../ModalWrapper/ModalWrapper";
+
+const posts = [
+    {
+        id: 1,
+        name: "John1",
+        description: "test description1"
+    },
+    {
+        id: 2,
+        name: "John2",
+        description: "test description2"
+    },
+    {
+        id: 3,
+        name: "John3",
+        description: 'test description3'
+    },
+]
 
 const Ticket = () => {
 
     const [state, setState] = useState([]);
-    const [modalIsOpen, setIsOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState({});
 
-    const customStyles = {
-        content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            display: 'flex',
-            flexDirection: 'row',
-            flexFlow: 'row nowrap',
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            flexWrap: 'nowrap',
-        },
-    };
 
     useEffect(() => {
-        fetch('http://localhost:3000/db')
-            .then(response => response.json())
-            .then(response => response.posts)
-            .then(posts => {
-                const mappedPosts = posts.map((post, i) => {
-                    return {
-                        id: i + 1,
-                        ...post
-                    }
-                })
-                setState(mappedPosts)
-            })
+        const existingPosts = localStorage.getItem('posts');
+
+        if (existingPosts && JSON.parse(existingPosts).length !== 0) {
+            setState(JSON.parse(existingPosts))
+        } else {
+            localStorage.setItem('posts', JSON.stringify(posts));
+            setState(posts)
+        }
+        // fetch('http://localhost:3000/db')
+        //     .then(response => response.json())
+        //     .then(response => response.posts)
+        //     .then(posts => {
+        //         const mappedPosts = posts.map((post, i) => {
+        //             return {
+        //                 id: i + 1,
+        //                 ...post
+        //             }
+        //         })
+        //         setState(mappedPosts)
+        //     })
     }, []);
 
-    const deleteTicket = (id) => {
-        setState(state.filter(ticket => ticket.id !== id))
-        closeModal()
+    const deleteTicket = () => {
+        setState((prevState) => {
+            const updatedState = prevState.filter(ticket => ticket.id !== selectedItem.id);
+            localStorage.setItem('posts', JSON.stringify(updatedState));
+
+            return updatedState;
+        });
+
+        setIsOptionsModalOpen(false);
     }
 
-    const editTicket = (id) => {
-        openUpdateModal()
+    const openEditModal = () => {
+        setIsOptionsModalOpen(false)
+        setIsEditModalOpen(true);
     }
 
-    const openModal = (item) => {
-        setSelectedItem(item)
-        setIsOpen(true);
+    const openIsOptionsModal = (item) => {
+        setSelectedItem(item);
+        setIsOptionsModalOpen(true)
     }
 
-    const closeModal = () => {
-        setIsOpen(false);
-        setSelectedItem({});
+    const closeEditModal = () => {
+        setIsEditModalOpen(false)
+    }
+
+    const closeOptionsModal = () => {
+        setIsOptionsModalOpen(false);
     }
 
 
@@ -70,19 +90,25 @@ const Ticket = () => {
                 <h1>Tickets</h1>
             </div>
 
-            <Modal
-                isOpen={modalIsOpen}
-                style={customStyles}
-                onRequestClose={closeModal}>
+            <UpdateModal
+                isOpen={isEditModalOpen}
+                name={selectedItem.name}
+                description={selectedItem.description}
+                onClose={closeEditModal}
+            />
 
+            <ModalWrapper
+                isOpen={isOptionsModalOpen}
+                onClose={closeOptionsModal}
+            >
                 <div>
-                    <Button onClick={() => editTicket(selectedItem.id)} variant="secondary">Update</Button>{' '}
+                    <Button className={style.buttonUd} onClick={openEditModal} variant="secondary">Update</Button>{' '}
                 </div>
 
                 <div>
-                    <Button onClick={() => deleteTicket(selectedItem.id)} variant="danger">Delete</Button>{' '}
+                    <Button className={style.buttonDel} onClick={deleteTicket} variant="danger">Delete</Button>{' '}
                 </div>
-            </Modal>
+            </ModalWrapper>
 
             <div>
                 <Table striped bordered hover variant="dark">
@@ -103,7 +129,8 @@ const Ticket = () => {
                                 <td>{item.name}</td>
                                 <td>{item.description}</td>
                                 <th>{moment().format("DD-MM-YYYY")}</th>
-                                <th><Button onClick={() => openModal(item)} variant="secondary">Option</Button>{' '}
+                                <th>
+                                    <Button onClick={() => openIsOptionsModal(item)} variant="secondary">Option</Button>
                                 </th>
                             </tr>
                         ))
