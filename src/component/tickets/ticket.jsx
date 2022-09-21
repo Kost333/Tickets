@@ -4,6 +4,7 @@ import moment from "moment";
 import {Button, Table} from "react-bootstrap";
 import UpdateModal from "../updateModal/updateModal";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
+import ModalAdd from "../ModalAdd/ModalAdd";
 
 const posts = [
     {
@@ -40,19 +41,23 @@ const Ticket = () => {
             localStorage.setItem('posts', JSON.stringify(posts));
             setState(posts)
         }
-        // fetch('http://localhost:3000/db')
-        //     .then(response => response.json())
-        //     .then(response => response.posts)
-        //     .then(posts => {
-        //         const mappedPosts = posts.map((post, i) => {
-        //             return {
-        //                 id: i + 1,
-        //                 ...post
-        //             }
-        //         })
-        //         setState(mappedPosts)
-        //     })
+
+        /*
+         fetch('http://localhost:3000/db')
+            .then(response => response.json())
+            .then(response => response.posts)
+            .then(posts => {
+                const mappedPosts = posts.map((post, i) => {
+                    return {
+                        id: i + 1,
+                        ...post
+                    }
+                })
+                setState(mappedPosts)
+            })
+         */
     }, []);
+
 
     const deleteTicket = () => {
         setState((prevState) => {
@@ -83,6 +88,10 @@ const Ticket = () => {
         setIsOptionsModalOpen(false);
     }
 
+    const updateLocalStorage = () => {
+        const existingPosts = localStorage.getItem('posts');
+        setState(JSON.parse(existingPosts))
+    }
 
     return (
         <div className={style.page}>
@@ -91,9 +100,15 @@ const Ticket = () => {
             </div>
 
             <UpdateModal
+                updateLocalStorage={updateLocalStorage}
                 isOpen={isEditModalOpen}
-                name={selectedItem.name}
-                description={selectedItem.description}
+                selectedPost={selectedItem}
+                onClose={closeEditModal}
+            />
+
+            <ModalAdd
+                updateLocalStorage={updateLocalStorage}
+                isOpen={isEditModalOpen}
                 onClose={closeEditModal}
             />
 
@@ -135,6 +150,13 @@ const Ticket = () => {
                             </tr>
                         ))
                     }
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><Button variant="success" onClick={openEditModal}>Add Ticket</Button>{' '}</td>
+                    </tr>
                     </tbody>
                 </Table>
             </div>

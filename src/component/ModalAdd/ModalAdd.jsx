@@ -1,28 +1,24 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Button, Table} from "react-bootstrap";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 
-const UpdateModal = ({isOpen, onClose, selectedPost, updateLocalStorage}) => {
-
+const ModalAdd = ({isOpen, onClose, updateLocalStorage}) => {
     const [post, setPost] = useState({})
 
-    useEffect(() => {
-        setPost(selectedPost)
-    }, [selectedPost])
-
-    const onSave = () => {
-        if (post) {
+    const onAdd = () => {
+        if (post.name && post.description) {
             const existingPosts = JSON.parse(localStorage.getItem('posts'))
-            const updatedPost = existingPosts?.map(item => {
-                if (item.id === post.id) return post
-                return item
-            })
 
-            localStorage.setItem('posts', JSON.stringify(updatedPost));
+            existingPosts.push({id: existingPosts.at(-1).id + 1, ...post})
+
+            localStorage.setItem('posts', JSON.stringify(existingPosts));
             updateLocalStorage()
             onClose()
+        } else {
+            alert("Invalid Values")
         }
     }
+
 
     const onChangeName = (name) => {
         setPost({...post, name})
@@ -47,10 +43,11 @@ const UpdateModal = ({isOpen, onClose, selectedPost, updateLocalStorage}) => {
                 </thead>
                 <tbody>
                 <tr>
-                    <td><input type="text" value={post.name} onChange={(e) => onChangeName(e.target.value)}/></td>
-                    <td><input type="text" value={post.description}
+                    <td><input type="text" value={post.name || ''}
+                               onChange={(e) => onChangeName(e.target.value)}/></td>
+                    <td><input type="text" value={post.description || ''}
                                onChange={(e) => onChangeDescription(e.target.value)}/></td>
-                    <td><Button variant="secondary" onClick={() => onSave()}>Save</Button>{' '}</td>
+                    <td><Button variant="secondary" onClick={onAdd}>Add</Button>{' '}</td>
                 </tr>
                 </tbody>
             </Table>
@@ -58,4 +55,4 @@ const UpdateModal = ({isOpen, onClose, selectedPost, updateLocalStorage}) => {
     );
 };
 
-export default UpdateModal;
+export default ModalAdd;
