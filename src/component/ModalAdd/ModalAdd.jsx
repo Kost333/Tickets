@@ -3,6 +3,7 @@ import {Button, Table} from "react-bootstrap";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 
 const ModalAdd = ({isOpen, onClose, updateLocalStorage}) => {
+
     const [post, setPost] = useState({})
 
     const onAdd = () => {
@@ -13,6 +14,7 @@ const ModalAdd = ({isOpen, onClose, updateLocalStorage}) => {
 
             localStorage.setItem('posts', JSON.stringify(existingPosts));
             updateLocalStorage()
+            setPost({})
             onClose()
         } else {
             alert("Invalid Values")

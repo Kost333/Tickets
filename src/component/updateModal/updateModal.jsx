@@ -13,11 +13,11 @@ const UpdateModal = ({isOpen, onClose, selectedPost, updateLocalStorage}) => {
     const onSave = () => {
         if (post) {
             const existingPosts = JSON.parse(localStorage.getItem('posts'))
+            post.isUpdated = true
             const updatedPost = existingPosts?.map(item => {
                 if (item.id === post.id) return post
                 return item
             })
-
             localStorage.setItem('posts', JSON.stringify(updatedPost));
             updateLocalStorage()
             onClose()

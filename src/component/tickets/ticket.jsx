@@ -28,6 +28,7 @@ const Ticket = () => {
 
     const [state, setState] = useState([]);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState({});
 
@@ -75,6 +76,11 @@ const Ticket = () => {
         setIsEditModalOpen(true);
     }
 
+    const openAddModal = () => {
+        setIsOptionsModalOpen(false)
+        setIsAddModalOpen(true);
+    }
+
     const openIsOptionsModal = (item) => {
         setSelectedItem(item);
         setIsOptionsModalOpen(true)
@@ -84,6 +90,10 @@ const Ticket = () => {
         setIsEditModalOpen(false)
     }
 
+    const closeAddModal = () => {
+        setIsAddModalOpen(false)
+    }
+
     const closeOptionsModal = () => {
         setIsOptionsModalOpen(false);
     }
@@ -91,6 +101,7 @@ const Ticket = () => {
     const updateLocalStorage = () => {
         const existingPosts = localStorage.getItem('posts');
         setState(JSON.parse(existingPosts))
+        console.log(existingPosts, 3434)
     }
 
     return (
@@ -108,8 +119,8 @@ const Ticket = () => {
 
             <ModalAdd
                 updateLocalStorage={updateLocalStorage}
-                isOpen={isEditModalOpen}
-                onClose={closeEditModal}
+                isOpen={isAddModalOpen}
+                onClose={closeAddModal}
             />
 
             <ModalWrapper
@@ -134,6 +145,7 @@ const Ticket = () => {
                         <th>Description</th>
                         <th>CreatedAt</th>
                         <th>Option</th>
+                        <th>Edited</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -147,6 +159,7 @@ const Ticket = () => {
                                 <th>
                                     <Button onClick={() => openIsOptionsModal(item)} variant="secondary">Option</Button>
                                 </th>
+                                <th><small>{item.isUpdated && '(edited)'}</small></th>
                             </tr>
                         ))
                     }
@@ -155,7 +168,8 @@ const Ticket = () => {
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><Button variant="success" onClick={openEditModal}>Add Ticket</Button>{' '}</td>
+                        <td><Button variant="success" onClick={openAddModal}>Add Ticket</Button>{' '}</td>
+                        <td></td>
                     </tr>
                     </tbody>
                 </Table>
