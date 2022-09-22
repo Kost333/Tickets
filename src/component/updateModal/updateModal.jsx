@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, Table} from "react-bootstrap";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 
-const UpdateModal = ({isOpen, onClose, selectedPost, updateLocalStorage}) => {
+const UpdateModal = ({isOpen, onClose, selectedPost, onUpdate}) => {
 
     const [post, setPost] = useState({})
 
@@ -12,14 +12,7 @@ const UpdateModal = ({isOpen, onClose, selectedPost, updateLocalStorage}) => {
 
     const onSave = () => {
         if (post) {
-            const existingPosts = JSON.parse(localStorage.getItem('posts'))
-            post.isUpdated = true
-            const updatedPost = existingPosts?.map(item => {
-                if (item.id === post.id) return post
-                return item
-            })
-            localStorage.setItem('posts', JSON.stringify(updatedPost));
-            updateLocalStorage()
+            onUpdate(post)
             onClose()
         }
     }
