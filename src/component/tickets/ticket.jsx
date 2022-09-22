@@ -101,7 +101,6 @@ const Ticket = () => {
     const updateLocalStorage = () => {
         const existingPosts = localStorage.getItem('posts');
         setState(JSON.parse(existingPosts))
-        console.log(existingPosts, 3434)
     }
 
     return (
