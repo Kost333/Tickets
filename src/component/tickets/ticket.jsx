@@ -5,6 +5,9 @@ import {Button, Table} from "react-bootstrap";
 import UpdateModal from "../updateModal/updateModal";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 import ModalAdd from "../ModalAdd/ModalAdd";
+import {useDispatch, useSelector} from "react-redux";
+import {ticketsOp} from "../../store/tickets/operations";
+import {ticketsSel} from "../../store/tickets/selectors";
 
 const posts = [
     {
@@ -25,8 +28,10 @@ const posts = [
 ]
 
 const Ticket = () => {
+    const dispatch = useDispatch();
 
-    const [state, setState] = useState([]);
+    const state = useSelector(ticketsSel.ticketsDataSelector);
+
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
@@ -37,10 +42,10 @@ const Ticket = () => {
         const existingPosts = localStorage.getItem('posts');
 
         if (existingPosts && JSON.parse(existingPosts).length !== 0) {
-            setState(JSON.parse(existingPosts))
+            dispatch(ticketsOp.setupTicketsState(JSON.parse(existingPosts)));
         } else {
             localStorage.setItem('posts', JSON.stringify(posts));
-            setState(posts)
+            dispatch(ticketsOp.setupTicketsState(posts))
         }
 
         /*
@@ -61,13 +66,9 @@ const Ticket = () => {
 
 
     const deleteTicket = () => {
-        setState((prevState) => {
-            const updatedState = prevState.filter(ticket => ticket.id !== selectedItem.id);
-            localStorage.setItem('posts', JSON.stringify(updatedState));
+        const updatedState = state.filter(ticket => ticket.id !== selectedItem.id);
 
-            return updatedState;
-        });
-
+        updateStates(updatedState)
         setIsOptionsModalOpen(false);
     }
 
@@ -98,9 +99,37 @@ const Ticket = () => {
         setIsOptionsModalOpen(false);
     }
 
-    const updateLocalStorage = () => {
-        const existingPosts = localStorage.getItem('posts');
-        setState(JSON.parse(existingPosts))
+    const updateStates = (tickets = []) => {
+        localStorage.setItem('posts', JSON.stringify(tickets));
+        dispatch(ticketsOp.setupTicketsState(tickets))
+    }
+
+    const handleUpdateTickets = (updatedTicket) => {
+        const updatedTickets = state.map((t) => {
+            if (t.id === updatedTicket.id) {
+                return {
+                    ...updatedTicket,
+                    isUpdated: true
+                }
+            }
+
+            return t
+        });
+
+        updateStates(updatedTickets);
+    }
+
+    const handleAddNewTicket = (name, description) => {
+        const updatedState = [
+            ...state,
+            {
+                id: state.at(-1).id + 1,
+                name,
+                description
+            }
+        ];
+
+        updateStates(updatedState);
     }
 
     return (
@@ -110,14 +139,14 @@ const Ticket = () => {
             </div>
 
             <UpdateModal
-                updateLocalStorage={updateLocalStorage}
                 isOpen={isEditModalOpen}
                 selectedPost={selectedItem}
+                onUpdate={handleUpdateTickets}
                 onClose={closeEditModal}
             />
 
             <ModalAdd
-                updateLocalStorage={updateLocalStorage}
+                onAdd={handleAddNewTicket}
                 isOpen={isAddModalOpen}
                 onClose={closeAddModal}
             />
