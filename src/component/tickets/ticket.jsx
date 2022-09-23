@@ -8,6 +8,8 @@ import ModalAdd from "../ModalAdd/ModalAdd";
 import {useDispatch, useSelector} from "react-redux";
 import {ticketsOp} from "../../store/tickets/operations";
 import {ticketsSel} from "../../store/tickets/selectors";
+import DarkMode from "../LightDarkMode/DarkMode";
+import {appStylesSel} from "../../store/app/selectors";
 
 const posts = [
     {
@@ -31,6 +33,7 @@ const Ticket = () => {
     const dispatch = useDispatch();
 
     const state = useSelector(ticketsSel.ticketsDataSelector);
+    const appStyles = useSelector(appStylesSel.getStyles);
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -134,8 +137,9 @@ const Ticket = () => {
 
     return (
         <div className={style.page}>
-            <div>
+            <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                 <h1>Tickets</h1>
+                <DarkMode/>
             </div>
 
             <UpdateModal
@@ -165,7 +169,7 @@ const Ticket = () => {
             </ModalWrapper>
 
             <div>
-                <Table striped bordered hover variant="dark">
+                <Table striped bordered hover variant={appStyles?.theme || 'dark'}>
                     <thead>
                     <tr>
                         <th>ID</th>
