@@ -1,5 +1,5 @@
 const getStyles = (state) => state.appStyles.styles
 
-export const appStylesSel =  {
+export const appStylesSel = {
     getStyles
 };

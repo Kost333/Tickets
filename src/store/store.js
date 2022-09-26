@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit'
+import {configureStore} from '@reduxjs/toolkit'
 import {ticketsSlice} from "./tickets/ticketsSlice";
 import {appStylesSlice} from "./app/appStylesSlice";
 

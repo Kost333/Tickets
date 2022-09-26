@@ -39,7 +39,7 @@ export const setupTicketsState = (tickets = []) => {
     }
 }
 
-export const ticketsOp =  {
+export const ticketsOp = {
     openAddModal,
     closeAddModal,
     addEditModal,

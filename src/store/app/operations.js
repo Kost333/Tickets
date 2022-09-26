@@ -8,6 +8,6 @@ const setStyles = (styles) => {
     }
 }
 
-export const appStylesOp =  {
+export const appStylesOp = {
     setStyles
 }
