@@ -169,7 +169,7 @@ const Ticket = () => {
             </ModalWrapper>
 
             <div>
-                <Table striped bordered hover variant={appStyles?.theme || 'dark'}>
+                <Table striped bordered hover variant={appStyles.theme}>
                     <thead>
                     <tr>
                         <th>ID</th>

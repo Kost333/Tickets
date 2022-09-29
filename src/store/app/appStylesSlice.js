@@ -19,5 +19,3 @@ export const appStylesSlice = createSlice({
         },
     },
 })
-
-export default appStylesSlice.reducer

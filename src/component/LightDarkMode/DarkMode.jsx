@@ -37,7 +37,7 @@ const DarkMode = () => {
     };
 
     useEffect(() => {
-        if (prefersDark) {
+        if (defaultDark) {
             setDark();
         } else {
             setLight();

@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Table} from "react-bootstrap";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
+import {useSelector} from "react-redux";
+import {appStylesSel} from "../../store/app/selectors";
 
 const UpdateModal = ({isOpen, onClose, selectedPost, onUpdate}) => {
-
     const [post, setPost] = useState({})
 
-    useEffect(() => {
-        setPost(selectedPost)
-    }, [selectedPost])
+    const appStyles = useSelector(appStylesSel.getStyles);
 
     const onSave = () => {
         if (post) {
@@ -25,12 +24,16 @@ const UpdateModal = ({isOpen, onClose, selectedPost, onUpdate}) => {
         setPost({...post, description})
     }
 
+    useEffect(() => {
+        setPost(selectedPost)
+    }, [selectedPost])
+
     return (
         <ModalWrapper
             isOpen={isOpen}
             onClose={onClose}
         >
-            <Table striped bordered hover variant="dark">
+            <Table striped bordered hover variant={appStyles.theme}>
                 <thead>
                 <tr>
                     <th>Name</th>

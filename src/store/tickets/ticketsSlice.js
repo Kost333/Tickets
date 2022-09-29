@@ -27,5 +27,3 @@ export const ticketsSlice = createSlice({
         },
     },
 })
-
-export default ticketsSlice.reducer
